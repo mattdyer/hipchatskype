@@ -14,11 +14,9 @@ if len(sys.argv) == 3:
 
 		result = subprocess.check_output(nettopArguments)
 		
-		#print result
-		
 		lines = result.splitlines()
 		
-		if len(lines) >= 3:
+		if len(lines) >= 4:
 			bytes_in_value = lines[3].split()[1]
 
 			if int(bytes_in_value) > 2000:
@@ -27,8 +25,9 @@ if len(sys.argv) == 3:
 			else:
 				call_status = "Available"
 			
-			print bytes_in_value
+			print(bytes_in_value)
 		else:
+			print(0)
 			call_status = "Available"
 		
 		return call_status
@@ -51,7 +50,7 @@ if len(sys.argv) == 3:
 
 		put_result = requests.put(user_url, params={"auth_token": token}, json=user_data)
 
-		print put_result.content
+		print(put_result.content)
 
 	last_skype_result = "Available"
 
@@ -63,7 +62,7 @@ if len(sys.argv) == 3:
 		
 		if skype_result != last_skype_result:
 		
-			print skype_result
+			print(skype_result)
 
 			if skype_result == "On Call":
 				update_hipchat_status("dnd", skype_result, mention_name, hipchat_token)
@@ -73,4 +72,4 @@ if len(sys.argv) == 3:
 		last_skype_result = skype_result
 
 else:
-	print "argument syntax python skypemonitor.py MENTIONNAME TOKEN"
+	print("argument syntax python skypemonitor.py MENTIONNAME TOKEN")
