@@ -4,10 +4,17 @@ import requests
 import json
 import time
 
-if len(sys.argv) == 3:
+if len(sys.argv) >= 3:
 	mention_name = sys.argv[1]
 	hipchat_token = sys.argv[2]
-
+	
+	if len(sys.argv) == 4:
+		data_usage_threshold = int(sys.argv[3])
+	else:
+		data_usage_threshold = 2000
+	
+	print(data_usage_threshold)
+	
 	def on_skype_call():
 
 		nettopArguments = ["nettop", "-P", "-m", "udp", "-p", "Skype", "-l", "2", "-k", "tx_win,tc_class,interface,state,tc_mgt,cc_algo,time,rx_dupe,rx_ooo,rtt_avg,rcvsize,re-tx,P,C,R,W,bytes_out", "-x", "-d"]
@@ -19,7 +26,7 @@ if len(sys.argv) == 3:
 		if len(lines) >= 4:
 			bytes_in_value = lines[3].split()[1]
 
-			if int(bytes_in_value) > 2000:
+			if int(bytes_in_value) > data_usage_threshold:
 				call_status = "On Call"
 				
 			else:
@@ -37,20 +44,21 @@ if len(sys.argv) == 3:
 		user_url = "https://api.hipchat.com/v2/user/@" + mention_name
 		
 		get_result = requests.get(user_url, params={"auth_token": token})
-
-		user_data = json.loads(get_result.content)
 		
-		#print user_data
+		print(get_result.status_code)
+		
+		if get_result.status_code == 200:
+			user_data = json.loads(get_result.content)
 			
-		user_data["presence"]["show"] = new_status
-		
-		user_data["presence"]["status"] = status_message
-		
-		#print user_data
+			
+			user_data["presence"]["show"] = new_status
+			
+			user_data["presence"]["status"] = status_message
+			
+			
+			put_result = requests.put(user_url, params={"auth_token": token}, json=user_data)
 
-		put_result = requests.put(user_url, params={"auth_token": token}, json=user_data)
-
-		print(put_result.content)
+			print(put_result.content)
 
 	last_skype_result = "Available"
 
@@ -72,4 +80,4 @@ if len(sys.argv) == 3:
 		last_skype_result = skype_result
 
 else:
-	print("argument syntax python skypemonitor.py MENTIONNAME TOKEN")
+	print("usage: python skypemonitor.py [mention_name] [token] [data_usage_threshold (optional)]")
