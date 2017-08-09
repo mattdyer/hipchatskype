@@ -48,17 +48,20 @@ if len(sys.argv) >= 3:
 		print(get_result.status_code)
 		
 		if get_result.status_code == 200:
-			user_data = json.loads(get_result.content)
-			
-			
-			user_data["presence"]["show"] = new_status
-			
-			user_data["presence"]["status"] = status_message
-			
-			
-			put_result = requests.put(user_url, params={"auth_token": token}, json=user_data)
+			try:
+				user_data = json.loads(get_result.content)
+				
+				user_data["presence"]["show"] = new_status
+				
+				user_data["presence"]["status"] = status_message
+				
+				
+				put_result = requests.put(user_url, params={"auth_token": token}, json=user_data)
 
-			print(put_result.content)
+				print(put_result.content)
+				
+			except TypeError:
+				print('Error setting hipchat status')
 
 	last_skype_result = "Available"
 
