@@ -17,14 +17,14 @@ if len(sys.argv) >= 3:
 	
 	def on_skype_call():
 
-		nettopArguments = ["nettop", "-P", "-m", "udp", "-p", "Skype", "-l", "2", "-k", "tx_win,tc_class,interface,state,tc_mgt,cc_algo,time,rx_dupe,rx_ooo,rtt_avg,rcvsize,re-tx,P,C,R,W,bytes_out", "-x", "-d"]
+		nettopArguments = ["nettop", "-P", "-m", "udp", "-p", "Skype Helper", "-l", "2", "-k", "tx_win,tc_class,interface,state,tc_mgt,cc_algo,time,rx_dupe,rx_ooo,rtt_avg,rcvsize,re-tx,P,C,R,W,bytes_out", "-x", "-d"]
 
 		result = subprocess.check_output(nettopArguments)
 		
 		lines = result.splitlines()
 		
 		if len(lines) >= 4:
-			bytes_in_value = lines[3].split()[1]
+			bytes_in_value = lines[3].split()[2]
 
 			if int(bytes_in_value) > data_usage_threshold:
 				call_status = "On Call"
